@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
@@ -25,6 +26,9 @@ class Spell extends PositionComponent with DragCallbacks, HasGameReference{
     }
     removeAll(particles);
     shoticles = List.generate(particleNumber, (index) => addParticle(index));
+    for (var shoticle in shoticles) {
+      shoticle.isShoticle = true;
+    }
     shoticles.first.position = Vector2.zero();
     return super.onLoad();
   }
@@ -59,13 +63,13 @@ class Spell extends PositionComponent with DragCallbacks, HasGameReference{
 
   @override
   void onDragEnd(DragEndEvent event) {
-    ShotSpell();
+    shotSpell();
     particles.first.position = game.size/2;
     removeAll(particles);
     super.onDragEnd(event);
   }
 
-  void ShotSpell(){
+  void shotSpell(){
     for (Particle shoticle in shoticles){
       final distanceTocenter = Vector2(0, game.size.y / 2) - shoticles.first.position;
       shoticle.setDirection(directionVector, distanceTocenter);
@@ -74,19 +78,21 @@ class Spell extends PositionComponent with DragCallbacks, HasGameReference{
   }
 }
 
-class Particle extends PositionComponent with SpringJoint {
+class Particle extends PositionComponent with SpringJoint, CollisionCallbacks {
 
   Particle(this.index, this.stableDistance) : super(size: Vector2.all(5.0));
 
   // Vector2 velocity = Vector2.zero();
   int index;
   Vector2 stableDistance;
+  bool isShoticle = false;
 
   @override
   FutureOr<void> onLoad() {
     position = stableDistance;
     Sparkle sparkle = Sparkle(Colors.yellow);
     add(sparkle);
+    add(RectangleHitbox());
     return super.onLoad();
   }
 
@@ -95,6 +101,13 @@ class Particle extends PositionComponent with SpringJoint {
     transform.angleDegrees = Random().nextDouble() * 360;
     super.update(dt);
   }
+
+  // @override
+  // void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+  //   super.onCollision(intersectionPoints, other);
+  //   if (!isShoticle) return;
+    
+  // }
 
 }
 

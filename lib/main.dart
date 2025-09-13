@@ -3,6 +3,7 @@ import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:testcomponents/mag_player.dart';
+import 'package:testcomponents/mob.dart';
 import 'package:testcomponents/spell.dart';
 
 void main() {
@@ -13,7 +14,7 @@ void main() {
   );
 }
 
-class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents {
+class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents, HasCollisionDetection {
   @override
   Future<void> onLoad() async {
     Spell spell = Spell();
@@ -26,6 +27,10 @@ class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents {
 
     MagPlayer mag = MagPlayer();
     world.add(mag);
+
+    Mob mob = Mob();
+    mob.position = Vector2(0, 200);
+    world.add(mob);
 
     return super.onLoad();
   }
@@ -53,6 +58,9 @@ class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents {
   void update(double dt) {
     Spell targetSpell = world.children.query<Spell>().first;
     MagPlayer magPlayer = world.children.query<MagPlayer>().first;
+
+    targetSpell.size.x = size.x/2;
+    targetSpell.size.y = size.y;
 
     targetSpell.position.x = 0;
     targetSpell.position.y = -size.y/2;

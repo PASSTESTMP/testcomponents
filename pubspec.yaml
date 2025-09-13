@@ -21,3 +21,4 @@ flutter:
   assets:
     - assets/images/mag.png
     - assets/images/mob.png
+    - assets/images/mob_die.png
