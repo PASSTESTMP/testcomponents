@@ -6,11 +6,13 @@ import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 
-class Spell extends PositionComponent with DragCallbacks {
+class Spell extends PositionComponent with DragCallbacks, HasGameReference{
   Spell() : super(size: Vector2.all(20.0));
 
   List<Particle> particles = [];
+  List<Particle> shoticles = [];
   Vector2 speed = Vector2.zero();
+  Vector2 directionVector = Vector2.zero();
 
   int particleNumber = 80;
 
@@ -18,12 +20,12 @@ class Spell extends PositionComponent with DragCallbacks {
   FutureOr<void> onLoad() {
     particles = List.generate(particleNumber, (index) => addParticle(index));
     for (var particle in particles) {
-      // particle.stiffness = 50 + Random().nextDouble() * 150;
-      // particle.damping = 1 + Random().nextDouble() * 5;
       add(particle);
       particle.attach(particles.first);
     }
     removeAll(particles);
+    shoticles = List.generate(particleNumber, (index) => addParticle(index));
+    shoticles.first.position = Vector2.zero();
     return super.onLoad();
   }
 
@@ -38,21 +40,37 @@ class Spell extends PositionComponent with DragCallbacks {
 
   @override
   void onDragStart(DragStartEvent event) {
-    addAll(particles);
+    final hasShoticles = children.any((c) => shoticles.contains(c));
+    if(hasShoticles) removeAll(shoticles);
     particles.first.position = event.localPosition;
+    addAll(particles);
+    for (Particle shoticle in shoticles){
+      shoticle.setDirection(Vector2.zero(), Vector2.zero());
+    }
     super.onDragStart(event);
   }
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
     particles.first.position = event.localEndPosition;
+    directionVector = (event.localEndPosition - event.localStartPosition).normalized();
     super.onDragUpdate(event);
   }
 
   @override
   void onDragEnd(DragEndEvent event) {
+    ShotSpell();
+    particles.first.position = game.size/2;
     removeAll(particles);
     super.onDragEnd(event);
+  }
+
+  void ShotSpell(){
+    for (Particle shoticle in shoticles){
+      final distanceTocenter = Vector2(0, game.size.y / 2) - shoticles.first.position;
+      shoticle.setDirection(directionVector, distanceTocenter);
+    }
+    addAll(shoticles);
   }
 }
 
@@ -60,7 +78,7 @@ class Particle extends PositionComponent with SpringJoint {
 
   Particle(this.index, this.stableDistance) : super(size: Vector2.all(5.0));
 
-  Vector2 velocity = Vector2.zero();
+  // Vector2 velocity = Vector2.zero();
   int index;
   Vector2 stableDistance;
 
@@ -105,10 +123,10 @@ mixin SpringJoint on PositionComponent {
   PositionComponent? connectedTo;
 
   /// Stała sprężystości (im większa, tym mocniej ciągnie)
-  double stiffness = 200.0;
+  double stiffness = 400.0;
 
   /// Współczynnik tłumienia (0 = brak, 1 = mocne tłumienie)
-  double damping = 5.0;
+  double damping = 15.0;
 
   /// Długość spoczynkowa sprężyny
   Vector2? restPosition;
@@ -117,17 +135,39 @@ mixin SpringJoint on PositionComponent {
   /// Aktualna prędkość (wektor)
   Vector2 velocity = Vector2.zero();
 
+  Vector2 targetDirection = Vector2.zero();
+
+  Vector2 distanceToCenter = Vector2.zero();
+
+  bool shotted = false;
+
   void attach(PositionComponent other) {
     connectedTo = other;
     restPosition = other.position - position;
     restLength = restPosition!.length;
   }
 
+  void setDirection(Vector2 direction, Vector2 distance){
+    targetDirection = direction;
+    distanceToCenter = distance;
+    shotted = true;
+  }
+
   @override
   void update(double dt) {
     super.update(dt);
+    
+    // Shoticles
+    if (connectedTo == null) {
+      
+      if(shotted){
+        position += distanceToCenter;
+        shotted = false;
+      }
 
-    if (connectedTo == null) return;
+      position += targetDirection * 400 * dt;
+      return;
+    }
 
     final other = connectedTo!;
     final displacement = other.position - position - restPosition!;
