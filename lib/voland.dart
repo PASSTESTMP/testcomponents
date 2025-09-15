@@ -6,6 +6,8 @@ class Voland extends CircleComponent with HasGameReference {
   Voland():super();
   SteerCicle steer = SteerCicle();
 
+  Vector2 speed = Vector2.zero();
+
   @override
   Future<void> onLoad() {
     paint = Paint()..color=Color.fromARGB(99, 207, 100, 223);
@@ -26,7 +28,7 @@ class Voland extends CircleComponent with HasGameReference {
 
     final steerCenterPosition = size/4;
     final steerOffset = steer.position;
-    final offset = steerCenterPosition - steerOffset;
+    final offset = steerOffset - steerCenterPosition;
     double maxRadius = size.length/4;
 
     if (offset.length > maxRadius) {
@@ -34,6 +36,8 @@ class Voland extends CircleComponent with HasGameReference {
 
       steer.position = limited;
     }
+
+    speed = offset.normalized();
     
 
     
@@ -44,8 +48,6 @@ class Voland extends CircleComponent with HasGameReference {
 
 class SteerCicle extends CircleComponent with DragCallbacks {
   SteerCicle():super();
-
-  Vector2 speed = Vector2.zero();
 
   @override
   Future<void> onLoad() {
@@ -58,8 +60,6 @@ class SteerCicle extends CircleComponent with DragCallbacks {
     Vector2 posChange = event.localEndPosition - size/2;
 
     position += posChange;
-
-    speed = position.normalized();
     super.onDragUpdate(event);
   }
   @override

@@ -43,6 +43,8 @@ class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents, HasCollis
     Voland voland = Voland();
     world.add(voland);
 
+    camera.follow(mag);
+
     return super.onLoad();
   }
 
@@ -70,16 +72,21 @@ class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents, HasCollis
     Spell targetSpell = world.children.query<Spell>().first;
     MagPlayer magPlayer = world.children.query<MagPlayer>().first;
     Voland voland = world.children.query<Voland>().first;
+    MagPlayer mag = world.children.query<MagPlayer>().first;
+
+    final playerSpeed = voland.speed;
+    mag.position += playerSpeed * 200 * dt; 
 
     targetSpell.size.x = size.x/2;
     targetSpell.size.y = size.y;
 
-    targetSpell.position.x = 0;
-    targetSpell.position.y = -size.y/2;
+    targetSpell.position.x = magPlayer.position.x;
+    targetSpell.position.y = magPlayer.position.y - size.y/2;
 
-    magPlayer.position = Vector2.zero();
+    // magPlayer.position = Vector2.zero();
 
-    voland.position.x = -size.x/4*2;
+    voland.position.x = magPlayer.position.x - size.x/4*2;
+    voland.position.y = magPlayer.position.y;
 
     super.update(dt);
   }
