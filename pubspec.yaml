@@ -22,3 +22,8 @@ flutter:
     - assets/images/mag.png
     - assets/images/mob.png
     - assets/images/mob_die.png
+    - assets/images/mud.png
+    - assets/images/stone.png
+    - assets/images/grass.png
+    - assets/images/water.png
+    - assets/images/lava.png

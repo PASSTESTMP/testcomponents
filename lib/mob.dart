@@ -13,7 +13,7 @@ class Mob extends PositionComponent with CollisionCallbacks{
 
   @override
   FutureOr<void> onLoad() {
-    size = Vector2(128, 128);
+    size = Vector2(64, 64);
     add(RectangleHitbox());
     add(mobSprite);
     return super.onLoad();

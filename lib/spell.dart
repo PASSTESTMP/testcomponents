@@ -51,6 +51,7 @@ class Spell extends PositionComponent with DragCallbacks, HasGameReference{
     for (Particle shoticle in shoticles){
       shoticle.setDirection(Vector2.zero(), Vector2.zero());
     }
+    shoticles.first.addHitboxToShoticle();
     super.onDragStart(event);
   }
 
@@ -92,8 +93,11 @@ class Particle extends PositionComponent with SpringJoint, CollisionCallbacks {
     position = stableDistance;
     Sparkle sparkle = Sparkle(Colors.yellow);
     add(sparkle);
-    add(RectangleHitbox());
     return super.onLoad();
+  }
+
+  void addHitboxToShoticle(){
+    add(RectangleHitbox());
   }
 
   @override
