@@ -7,6 +7,7 @@ class Voland extends CircleComponent with HasGameReference {
   SteerCicle steer = SteerCicle(0.0);
 
   Vector2 speed = Vector2.zero();
+  Vector2 previousGameSize = Vector2.zero();
 
   @override
   Future<void> onLoad() {
@@ -31,15 +32,14 @@ class Voland extends CircleComponent with HasGameReference {
     final steerCenterPosition = size/4;
     final steerOffset = steer.position;
     final offset = steerOffset - steerCenterPosition;
-    // double maxRadius = radius;
 
-    // if (offset.length > maxRadius) {
-    //   final limited = steerCenterPosition + steerOffset.normalized() * maxRadius;
-
-    //   steer.position = limited;
-    // }
 
     speed = offset.normalized();
+
+    if (game.size != previousGameSize){
+      steer.position = steer.size/2;
+    }
+    previousGameSize = game.size;
     
 
     
