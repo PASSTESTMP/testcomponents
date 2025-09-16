@@ -11,10 +11,14 @@ class Mob extends PositionComponent with CollisionCallbacks{
 
   DieAnimation dieAnimation = DieAnimation();
 
+  RectangleHitbox hb = RectangleHitbox();
+
   @override
   FutureOr<void> onLoad() {
     size = Vector2(64, 64);
-    add(RectangleHitbox());
+    anchor = Anchor.center;
+    mobSprite.position = size/2;
+    add(hb);
     add(mobSprite);
     return super.onLoad();
   }

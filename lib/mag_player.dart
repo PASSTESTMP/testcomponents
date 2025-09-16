@@ -1,10 +1,14 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
 
 class MagPlayer extends PositionComponent with HasGameReference {
   MagPlayer():super();
   MagSprite magSprite = MagSprite();
+
+  double lookAngleOffset = 45;
+  double lookAngle = 0;
 
   @override
   FutureOr<void> onLoad() {
@@ -14,8 +18,10 @@ class MagPlayer extends PositionComponent with HasGameReference {
 
   @override
   void update(double dt) {
+    angle = radians(lookAngle - lookAngleOffset);
     super.update(dt);
   }
+
 }
 
 

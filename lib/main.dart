@@ -87,7 +87,9 @@ class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents, HasCollis
 
     voland.position.x = magPlayer.position.x - size.x/4*2;
     voland.position.y = magPlayer.position.y;
-
+    if (voland.speed.length != 0){
+      mag.lookAngle = degrees(Vector2(0,-1).angleToSigned(voland.speed));
+    }
     super.update(dt);
   }
 }

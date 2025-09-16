@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 class Voland extends CircleComponent with HasGameReference {
   Voland():super();
-  SteerCicle steer = SteerCicle();
+  SteerCicle steer = SteerCicle(0.0);
 
   Vector2 speed = Vector2.zero();
 
@@ -24,18 +24,20 @@ class Voland extends CircleComponent with HasGameReference {
     size = game.size/2;
     steer.size = size/2;
 
+    steer.maxRadius = radius;
+
     // steer.position = size/4;
 
     final steerCenterPosition = size/4;
     final steerOffset = steer.position;
     final offset = steerOffset - steerCenterPosition;
-    double maxRadius = size.length/4;
+    // double maxRadius = radius;
 
-    if (offset.length > maxRadius) {
-      final limited = steerCenterPosition + steerOffset.normalized() * maxRadius;
+    // if (offset.length > maxRadius) {
+    //   final limited = steerCenterPosition + steerOffset.normalized() * maxRadius;
 
-      steer.position = limited;
-    }
+    //   steer.position = limited;
+    // }
 
     speed = offset.normalized();
     
@@ -47,7 +49,10 @@ class Voland extends CircleComponent with HasGameReference {
 }
 
 class SteerCicle extends CircleComponent with DragCallbacks {
-  SteerCicle():super();
+  SteerCicle(this.maxRadius):super();
+  double maxRadius;
+
+  Vector2 startOffsetPosition = Vector2.zero();
 
   @override
   Future<void> onLoad() {
@@ -56,10 +61,17 @@ class SteerCicle extends CircleComponent with DragCallbacks {
   }
 
   @override
+  void onDragStart(DragStartEvent event) {
+    startOffsetPosition = event.localPosition;
+    super.onDragStart(event);
+  }
+
+  @override
   void onDragUpdate(DragUpdateEvent event) {
-    Vector2 posChange = event.localEndPosition - size/2;
+    Vector2 posChange = event.localEndPosition - startOffsetPosition;
 
     position += posChange;
+
     super.onDragUpdate(event);
   }
   @override
