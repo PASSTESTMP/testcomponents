@@ -6,7 +6,32 @@ import 'package:flame/components.dart';
 class GameStatus {
   GameStatus():super();
 
+  double moveFactor = 1.0;
+
   Map map = Map();
+
+  void updateMoveFactor(actualPosition) {
+
+    final indexA = (actualPosition.x / 128).toInt();
+    final indexB = (actualPosition.y / 128 + 32/128).toInt();
+
+    final index = indexA*32 + indexB;
+
+    int actualTileType = map.map.elementAt(index).typeColor;
+    moveFactor = switch (actualTileType) {
+      0 => -1.0,
+      1 => 0.5,
+      2 => -1.0,
+      3 => 1.0,
+      4 => 0.0,
+      5 => 1.0,
+      6 => 1.0,
+      7 => 1.0,
+      _ => 1.0
+    };
+  }
+
+  
 
 
 }
@@ -17,6 +42,7 @@ class Map extends PositionComponent {
 
   @override
   FutureOr<void> onLoad() {
+    // position = Vector2(-128*32, -128*32);
     // 64x64 tile
     map = List.generate(64*64, (index) {
       MapTile tile = MapTile(Random().nextInt(8));

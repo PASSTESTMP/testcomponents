@@ -17,10 +17,12 @@ void main() {
 }
 
 class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents, HasCollisionDetection {
+
+  GameStatus gs = GameStatus();
+
   @override
   Future<void> onLoad() async {
-    GameStatus gs = GameStatus();
-    gs.map.position = Vector2(-128*32, -128*32);
+    
     world.add(gs.map);
     
     Spell spell = Spell();
@@ -29,7 +31,7 @@ class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents, HasCollis
     spell.position = size / 4;
     world.add(spell);
 
-    debugMode = false;
+    debugMode = true;
 
     
 
@@ -74,7 +76,9 @@ class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents, HasCollis
     Voland voland = world.children.query<Voland>().first;
     MagPlayer mag = world.children.query<MagPlayer>().first;
 
-    final playerSpeed = voland.speed;
+    gs.updateMoveFactor(mag.position);
+
+    final playerSpeed = voland.speed*gs.moveFactor;
     mag.position += playerSpeed * 200 * dt; 
 
     targetSpell.size.x = size.x/2;

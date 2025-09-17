@@ -38,8 +38,8 @@ class Voland extends CircleComponent with HasGameReference {
 
     if (game.size != previousGameSize){
       steer.position = steer.size/2;
+      previousGameSize = Vector2(game.size.x, game.size.y);
     }
-    previousGameSize = game.size;
     
 
     
