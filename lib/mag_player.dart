@@ -32,6 +32,8 @@ class MagSprite extends SpriteAnimationComponent with HasGameReference {
   
   int actualMagTileType = 0;
 
+  final floorResponse = FloorResponse();
+
   @override
   Future<void> onLoad() async {
     // Load a sprite sheet image
@@ -54,9 +56,11 @@ class MagSprite extends SpriteAnimationComponent with HasGameReference {
 
   @override
   void update(double dt) {
-    final floorResponse = FloorResponse();
-    floorResponse.actualMagTileType = actualMagTileType;
-    add(floorResponse);
+    if(floorResponse.actualMagTileType != actualMagTileType){
+      floorResponse.actualMagTileType = actualMagTileType;
+      children.query<FloorResponse>().firstOrNull?.removeFromParent();
+      add(floorResponse);
+    }
     super.update(dt);
   }
 
@@ -88,6 +92,7 @@ class FloorResponse extends SpriteAnimationComponent with HasGameReference {
       ),
     );
     size = spriteSize;
+    position = Vector2(64, 64);
     anchor = Anchor.center;
     await super.onLoad();
   }
