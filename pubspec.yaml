@@ -27,3 +27,5 @@ flutter:
     - assets/images/grass.png
     - assets/images/water.png
     - assets/images/lava.png
+    - assets/images/egg.png
+    - assets/images/splash.png

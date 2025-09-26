@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:flame/extensions.dart';
 
 class MagPlayer extends PositionComponent with HasGameReference {
   MagPlayer():super();
@@ -9,6 +8,8 @@ class MagPlayer extends PositionComponent with HasGameReference {
 
   double lookAngleOffset = 45;
   double lookAngle = 0;
+
+  int actualMagTileType = 0;
 
   @override
   FutureOr<void> onLoad() {
@@ -19,6 +20,7 @@ class MagPlayer extends PositionComponent with HasGameReference {
   @override
   void update(double dt) {
     angle = radians(lookAngle - lookAngleOffset);
+    magSprite.actualMagTileType = actualMagTileType;
     super.update(dt);
   }
 
@@ -27,6 +29,8 @@ class MagPlayer extends PositionComponent with HasGameReference {
 
 class MagSprite extends SpriteAnimationComponent with HasGameReference {
   MagSprite():super();
+  
+  int actualMagTileType = 0;
 
   @override
   Future<void> onLoad() async {
@@ -48,5 +52,44 @@ class MagSprite extends SpriteAnimationComponent with HasGameReference {
     await super.onLoad();
   }
 
+  @override
+  void update(double dt) {
+    final floorResponse = FloorResponse();
+    floorResponse.actualMagTileType = actualMagTileType;
+    add(floorResponse);
+    super.update(dt);
+  }
+
 }
 
+
+class FloorResponse extends SpriteAnimationComponent with HasGameReference {
+  FloorResponse():super();
+
+  int actualMagTileType = 0;
+
+  @override
+  Future<void> onLoad() async {
+    // Load a sprite sheet image
+    final spriteName = switch (actualMagTileType) {
+      _ => 'splash.png'
+    };
+
+    final spriteSheet = await game.images.load(spriteName);
+    // Define the size of each frame in the sprite sheet
+    final spriteSize = Vector2(128, 128);
+    // Create the animation from the sprite sheet
+    animation = SpriteAnimation.fromFrameData(
+      spriteSheet,
+      SpriteAnimationData.sequenced(
+        amount: 7, // number of frames
+        stepTime: 0.15, // time per frame
+        textureSize: spriteSize,
+      ),
+    );
+    size = spriteSize;
+    anchor = Anchor.center;
+    await super.onLoad();
+  }
+
+}

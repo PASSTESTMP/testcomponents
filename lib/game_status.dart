@@ -7,6 +7,7 @@ class GameStatus {
   GameStatus():super();
 
   double moveFactor = 1.0;
+  int actualTileType = 0;
 
   Map map = Map();
 
@@ -15,15 +16,15 @@ class GameStatus {
     final indexA = (actualPosition.x / 128).toInt();
     final indexB = (actualPosition.y / 128 + 32/128).toInt();
 
-    final index = indexA*32 + indexB;
+    final index = indexA*64 + indexB;
 
-    int actualTileType = map.map.elementAt(index).typeColor;
+    actualTileType = map.map.elementAt(index).typeColor;
     moveFactor = switch (actualTileType) {
-      0 => -1.0,
+      0 => 0.1,
       1 => 0.5,
-      2 => -1.0,
+      2 => 0.1,
       3 => 1.0,
-      4 => 0.0,
+      4 => 1.1,
       5 => 1.0,
       6 => 1.0,
       7 => 1.0,
@@ -71,7 +72,7 @@ class MapTile extends SpriteComponent {
       4 => 'stone.png',
       // 5 => 'lava.png',
       // 6 => 'lava.png',
-      // 7 => 'lava.png',
+      7 => 'egg.png',
       _ => 'grass.png',
     };
     sprite = await Sprite.load(selectedSprite);

@@ -31,7 +31,7 @@ class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents, HasCollis
     spell.position = size / 4;
     world.add(spell);
 
-    debugMode = true;
+    debugMode = false;
 
     
 
@@ -77,6 +77,8 @@ class MyEmptyGame extends FlameGame with HasKeyboardHandlerComponents, HasCollis
     MagPlayer mag = world.children.query<MagPlayer>().first;
 
     gs.updateMoveFactor(mag.position);
+
+    mag.actualMagTileType = gs.actualTileType;
 
     final playerSpeed = voland.speed*gs.moveFactor;
     mag.position += playerSpeed * 200 * dt; 
